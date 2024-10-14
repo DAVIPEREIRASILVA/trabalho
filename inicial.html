@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro com Campo de Texto e Botões</title>
+    <link type="text/css" href="./arquivos/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="./arquivos/material-kit.css" rel="stylesheet">
+    <link type="text/css" href="./arquivos/estilo.css" rel="stylesheet">
+    <style>
+
+
+
+.corpo {
+    margin: 5px auto;  /* Margens superior e inferior de 5px, centralizado horizontalmente */
+    padding: 0 10px;   /* Padding interno lateral reduzido */
+    max-width: 90%;   /* Garantir que não seja limitada por Bootstrap */
+}
+
+
+#searchLegend {
+    text-align: center;      /* Centraliza o texto */
+    font-size: 40px;         /* Aumenta o tamanho da fonte */
+    font-weight: bold;       /* Deixa o texto em negrito */
+   margin: 50px auto 0;     /* 20px de margem superior, centralizado horizontalmente */         display: block;          /* Permite aplicar margin ao legend */
+}
+
+
+
+
+
+
+.centered-placeholder {
+  text-align: center; /* Centraliza horizontalmente o texto */
+  height: 50px; /* Ajuste conforme necessário */
+  line-height: 50px; /* Deve ter o mesmo valor que a altura para centralização vertical */
+}
+
+::placeholder {
+  text-align: center; /* Centraliza o placeholder horizontalmente */
+  color: #aaa; /* Ajuste de cor, opcional */
+}
+
+
+
+        .header-logo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000; /* Garante que o logo esteja acima do restante do conteúdo */
+        }
+
+
+
+        .header-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+
+
+
+        .fixed-menu {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+            display: none; /* Menu inicialmente escondido */
+        }
+
+        .fixed-menu .btn {
+            margin: 5px;
+        }
+
+        .pdf-icon {
+            font-size: 40px;
+            color: red;
+            cursor: pointer;
+        }
+#filterButtons {
+    display: flex;
+    justify-content: center; /* Centraliza os botões horizontalmente */
+    flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha */
+    background-color: white; /* Fundo branco */
+    padding: 20px; /* Espaçamento interno para o fundo branco */
+    gap: 5px; /* Espaçamento entre os botões */
+}
+
+#filterButtons button {
+    margin: 0px; /* Espaçamento ao redor dos botões */
+}
+
+
+#conteudo {
+    padding-top: 550px; /* Espaço para evitar sobreposição com o header fixo */
+}
+
+        #searchField {
+            margin: 20px 0;
+        }
+
+        .divider-text {
+            margin: 20px 0;
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background-color: #343a40;
+            padding: 15px;
+        }
+
+        .tema {
+            display: none;
+        }
+
+        .tema-table {
+            margin-top: 10px;
+        }
+
+        #bannerView {
+ 
+            margin-top: -360px;
+            text-align: center;
+            display: none; /* Escondido até carregar um banner */
+        }
+
+        #bannerView img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        body {
+            
+		padding-top: 80px; /* Ajuste conforme a altura do cabeçalho */
+        }
+
+        #keyboardContainer {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #myInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #virtualKeyboard {
+            display: none;
+            grid-template-columns: repeat(28, 1fr);
+            gap: 5px;
+            margin-top: 2px;
+        }
+        #virtualKeyboard button {
+            padding: 2px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #virtualKeyboard button:hover {
+            background-color: #e0e0e0;
+        }
+        #virtualKeyboard .wide {
+            grid-column: span 0;
+        }
+        #virtualKeyboard .wide-backspace {
+            grid-column: span 0;
+        }
+        #virtualKeyboard .wide-enter {
+            grid-column: span 0;
+        }
+
+
+
+
+
+    </style>
+
+
+
+
+
+</head>
+<body>
+
+
+
+
+
+
+<!-- Logo no topo -->
+<div class="header-logo" id="logo">
+    <img src="arquivos/3.png" alt="Logo">
+    <!-- Botões para filtrar por categoria -->
+    <div id="filterButtons">
+
+
+        <button class="btn btn-primary" onclick="filterByTheme(0)">Mostrar Todos</button>
+        <button class="btn btn-primary" onclick="filterByTheme(1)">ATENÇÃO BÁSICA</button>
+        <button class="btn btn-primary" onclick="filterByTheme(2)">ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA</button>
+        <button class="btn btn-primary" onclick="filterByTheme(3)">DESENVOLVIMENTO SUSTENTÁVEL / MUDANÇAS CLIMÁTICAS</button>
+        <button class="btn btn-primary" onclick="filterByTheme(4)">EDUCAÇÃO EM SAÚDE</button>
+        <button class="btn btn-primary" onclick="filterByTheme(5)">GESTÃO EM SAÚDE</button>
+        <button class="btn btn-primary" onclick="filterByTheme(6)">VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A)</button>
+ 
+
+
+
+
+
+
+          <legend id="searchLegend">
+            	Pesquisa 
+
+          </legend>
+
+
+      <span class="label label-danger hidden">Nenhum resultado para sua pesquisa</span>
+
+
+
+
+
+
+    <input type="text" id="searchField" class="form-control centered-placeholder" onkeyup="searchWorks()" placeholder="Digite um termo para pesquisar nos trabalhos">
+<div id="teclado">
+<div id="virtualKeyboard">
+            <button onclick="typeKey('A')">A</button>
+            <button onclick="typeKey('B')">B</button>
+            <button onclick="typeKey('C')">C</button>
+            <button onclick="typeKey('D')">D</button>
+            <button onclick="typeKey('E')">E</button>
+            <button onclick="typeKey('F')">F</button>
+            <button onclick="typeKey('G')">G</button>
+            <button onclick="typeKey('H')">H</button>
+            <button onclick="typeKey('I')">I</button>           
+	    <button onclick="typeKey('J')">J</button>
+            <button onclick="typeKey('K')">K</button>
+            <button onclick="typeKey('L')">L</button>
+            <button onclick="typeKey('M')">M</button>
+            <button onclick="typeKey('N')">N</button>
+            <button onclick="typeKey('O')">O</button>
+            <button onclick="typeKey('P')">P</button>
+	    <button onclick="typeKey('Q')">Q</button>
+            <button onclick="typeKey('R')">R</button>
+            <button onclick="typeKey('S')">S</button>
+            <button onclick="typeKey('T')">T</button>
+            <button onclick="typeKey('U')">U</button>
+            <button onclick="typeKey('V')">V</button>
+            <button onclick="typeKey('W')">W</button>
+            <button onclick="typeKey('X')">X</button>
+            <button onclick="typeKey('Y')">Y</button>
+            <button onclick="typeKey('Z')">Z</button>
+            <button onclick="typeKey(' ')">__</button>
+            <button onclick="typeKey('Backspace')">&#9003;</button>
+
+</div>
+</div>
+
+    </div>
+</div>
+
+<div id="conteudo">
+  <div class="corpo">
+
+
+    <section id="tables-section">
+      <!-- Tabelas geradas dinamicamente pelo JavaScript -->
+    </section>
+
+    <!-- Div para exibir o banner -->
+    <div id="bannerView"></div>
+
+  </div>
+</div>
+
+<!-- Menu fixo que aparece ao carregar um banner -->
+<div class="fixed-menu" id="fixedMenu">
+    <button class="btn btn-danger" onclick="goBack()">Voltar</button>
+</div>
+
+<script>
+  const searchField = document.getElementById("searchField");
+        const virtualKeyboard = document.getElementById("virtualKeyboard");
+
+        searchField.addEventListener("focus", function() {
+            virtualKeyboard.style.display = "grid";
+        });
+
+        searchField.addEventListener("blur", function() {
+            // Use a timeout to allow button clicks to be processed before hiding
+            setTimeout(() => {
+                if (!virtualKeyboard.contains(document.activeElement)) {
+                    virtualKeyboard.style.display = "grid";
+                }
+            }, 200);
+        });
+
+  // Função para digitar a letra clicada
+  function typeKey(key) {
+      // Verifica se o campo está ativo
+      if (key === 'Backspace') {
+          searchField.value = searchField.value.slice(0, -1); // Apaga o último caractere
+      } else if (key === ' ') {
+          searchField.value += ' '; // Adiciona um espaço
+      } else {
+          searchField.value += key; // Adiciona a letra clicada
+      }
+      // Foca novamente no campo para permitir digitação contínua
+	searchField.focus();
+	searchWorks();
+
+  }
+
+
+
+
+// Função para filtrar por categoria
+function filterByTheme(themeId) {
+    // Oculta todas as divs com a classe 'tema'
+    document.querySelectorAll('.tema').forEach(function (div) {
+        div.style.display = 'none';
+    });
+
+    // Verifica se o valor é 0 e exibe todas as divs
+    if (themeId === 0) {
+        document.querySelectorAll('.tema').forEach(function (div) {
+            div.style.display = 'block';
+        });
+    } else {
+        // Exibe apenas a div correspondente ao tema selecionado
+        document.getElementById('tema_' + themeId).style.display = 'block';
+    }
+
+    // Rola para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+
+// Função de pesquisa de trabalhos
+function searchWorks() {
+    var input = document.getElementById("searchField");
+    var filter = input.value.toLowerCase();
+    var temas = document.querySelectorAll(".tema");
+
+    temas.forEach(function (tema) {
+        var rows = tema.querySelectorAll("tbody tr");
+        var temaVisible = false;
+
+        rows.forEach(function (row) {
+            var text = row.innerText.toLowerCase();
+            if (text.includes(filter)) {
+                row.style.display = '';
+                temaVisible = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        tema.style.display = temaVisible ? 'block' : 'none';
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// Função para carregar o banner na própria página e esconder as categorias
+function loadBanner(bannerPath) {
+    // Ocultar todas as categorias, campo de busca e teclado virtual
+    const elementsToHide = ['filterButtons', 'tables-section', 'searchField', 'searchLegend', 'logo', 'teclado'];
+    elementsToHide.forEach(function (id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.display = 'none'; // Esconde o elemento
+        }
+    });
+
+    // Mostrar o banner na div e o menu fixo
+    const bannerView = document.getElementById('bannerView');
+    if (bannerView) {
+        bannerView.innerHTML = `<img src="${bannerPath}" alt="Banner" style="width: 100%; height: auto;">`;
+        bannerView.style.display = 'block'; // Exibe o banner
+        bannerView.style.width = '90vw'; // Garante que a div ocupe toda a largura da viewport
+        bannerView.style.overflow = 'hidden'; // Impede barras de rolagem
+    }
+
+    const fixedMenu = document.getElementById('fixedMenu');
+    if (fixedMenu) {
+        fixedMenu.style.display = 'block'; // Exibe o menu fixo
+    }
+}
+
+// Função para recarregar a página ao clicar em "Voltar"
+function goBack() {
+    location.reload(); // Recarrega a página
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Função para criar as tabelas com base no texto de dados
+function createTables() {
+    var data = document.getElementById("data-txt").textContent.trim();
+    var lines = data.split("\n");
+    var categories = {};
+
+    lines.forEach(function (line) {
+        var [id_trabalho, author, title, category, id] = line.split(";");
+
+        if (!categories[category]) {
+            categories[category] = `
+              <div class="tema" id="tema_${id}">
+                <div class="divider-text">${category}</div>
+                <table class="table tema-table">
+                  <thead>
+                    <tr>
+                      <th>Nome do Trabalho</th>
+                      <th>Autores</th>
+                      <th>Banner</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            `;
+        }
+
+        categories[category] += `
+          <tr>
+            <td>${title}</td>
+            <td>${author}</td>
+            <td><span class="pdf-icon" onclick="loadBanner('trabalhos/${id_trabalho}.jpg')">📄</span></td>
+          </tr>
+        `;
+    });
+
+    var section = document.getElementById('tables-section');
+    for (var category in categories) {
+        categories[category] += `
+              </tbody>
+            </table>
+          </div>
+        `;
+        section.innerHTML += categories[category];
+    }
+
+    // Exibe todos os temas por padrão ao carregar a página
+    document.querySelectorAll('.tema').forEach(function (div) {
+        div.style.display = 'block';
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    createTables();
+});
+</script>
+
+<!-- Dados dos trabalhos em formato de texto separado por vírgulas -->
+<pre id="data-txt" style="display:none;">
+
+
+78;Izadora Pinheiro Mariano, Katia Varela Gomes.;A Demanda Emocional do Trabalho dos Agentes Comunitários de Saúde;ATENÇÃO BÁSICA;1
+18;Luana Marques Ferreira, Clara Andrade Prado Teixeira, Renart Lary Goda, Fabio Jose Duarte dos Santos;Acolhimento e Acompanhamento farmaceutico e multi para usuários com Início de Insulinoterapia;ATENÇÃO BÁSICA;1
+61;Arnaldo Marques Pereira Neto;Acolhimento e sensibilidade masculina na prevenção do câncer de colo de útero: Um cuidado humano;ATENÇÃO BÁSICA;1
+70;ALAN DIAS DE ALENCAR FERREIRA;ACOLHIMENTO INFORMATIVO : VÍNCULO DE CONFIANÇA PROFISSIONAL / PACIENTES EM PEDIATRIA NO SUS.;ATENÇÃO BÁSICA;1
+80;MALU MIDORI NAKAO DOS SANTOS, LUANA FLAUSINO DARDIS;ACOMPANHAMENTO DE SAÚDE DOS IMIGRANTES AFEGÃOS NA UBS INOCOOP;ATENÇÃO BÁSICA;1
+5;Caroline Borghi dos Santos, Paula Verônica Martini Maciel;Alimentação saudável e cardioprotetora segundo o guia do Ministério da Saúde (MS);ATENÇÃO BÁSICA;1
+120;CARLA RAFAELA DONEGÁ, Regiane Vieira Souza, Andrea Cristina Garcia, Daniela de Paula Costa, Bruno Torquato de Araújo, Camila R. de Almeida, Gabriel N. Komeçu, Kawanny Alves, Cleonilde Cantanhede.;AMPLIAÇÃO DO TRABALHO DA EQUIPE DE SAÚDE INDÍGENA DE GUARULHOS: AVANÇO COM AGENTE INDÍGENA DE SAÚDE;ATENÇÃO BÁSICA;1
+37;Camila Esteves Figueira;Análise da Implementação do Grupos de Atendimento para Pacientes com HAS e DM na UBS Jd Acácio;ATENÇÃO BÁSICA;1
+73;Clara Andrade Prado Teixeira, Renart Larry Goda Fernandez.;Aprender pode ser um filme! Desenvolvimento de curta metragem como ferramenta de Educação em Saúde;ATENÇÃO BÁSICA;1
+134;Ana Osmira Carvalho Saldanha, Warley Leite Figueiredo.;Assistência ao parto pélvico vaginal não instrumentalizado: relato de caso;ATENÇÃO BÁSICA;1
+144;Jairo Santos Araujo;ATELIER CULTURAL: O PODER DA ARTE NA PROMOÇÃO DA SAÚDE;ATENÇÃO BÁSICA;1
+62;Maria Victória Ferreira de Souza Vieira da Cunha, Claudia Deniz Ronanzini, Elisangela Marina Paulino, Beatriz Costa Ferreira, Eurides da Cruz Macedo, Erika Uhera Higa.;Atendimento Integral a Família Afegã Refugiada: Desafios Culturais e de Saúde na UBS Continental;ATENÇÃO BÁSICA;1
+4;Caroline Borghi dos Santos, Paula Verônica Martini Maciel;Auriculoterapia como terapêutica integrativa e complementar para tabagistas.;ATENÇÃO BÁSICA;1
+94;Fábio Soares Silva, Malu Midori Nakao dos Santos.;CONSCIENTIZAÇÃO DOS MALEFÍCIOS CAUSADOS PELO USO DE NARGUILÉ E CIGARRO ELETRÔNICO NA EE INOCOOP II;ATENÇÃO BÁSICA;1
+124;Valdirene Lopes Garcia, Adriana Prado de Souza.;CUIDADO FARMACÊUTICO DO PACIENTE IDOSO POLIMEDICADO PORTADOR DE HAS E DM2 NA ATENÇÃO BÁSICA;ATENÇÃO BÁSICA;1
+21;Aline Trindade Granero Takeuti;Cuidado Farmacêutico em ILPI's;ATENÇÃO BÁSICA;1
+69;Juliana Cristina do Nascimento Lins Campos;CUIDADO FARMACÊUTICO EM PACIENTE POLIMEDICADO;ATENÇÃO BÁSICA;1
+42;Bruna Sanches de Melo Medeiros;CUIDADO FARMACÊUTICO MATERNO INFANTIL COM ENFOQUE NO ALEITAMENTO MATERNO;ATENÇÃO BÁSICA;1
+57;Maxwell da Silva Vieira;CUIDADO FARMACÊUTICO: UMA PARCERIA DE SUCESSO NO ATENDIMENTO A PACIENTES HIPERTENSOS E DIABÉTICOS;ATENÇÃO BÁSICA;1
+177;Keila Costa de Oliveira, Denise Castanho Antunes.;ESCUTA QUALIFICADA NO CONTEXTO DAS PRÁTICAS INTEGRATIVAS: a experiência do CEMPICS Fracalanza;ATENÇÃO BÁSICA;1
+63;Fernando Kaneko de Oliveira Prado;ESTUDO DE CASO DE DM2 DO CUIDADO FARMACÊUTICO NA UBS RECREIO SÃO JORGE;ATENÇÃO BÁSICA;1
+64;Fernando Kaneko de Oliveira Prado, Renato Pamplona Cardozo Costa.;ESTUDO DE CASO DE HAS ASSOCIADA À SAUDE MENTAL DO CUIDADO FARMACÊUTICO NA UBS RECREIO SÃO JORGE;ATENÇÃO BÁSICA;1
+121;Cristiane do Vale Andrade Kuroda, Viviane Sidor, Elaine Santiago Gomes, Rosemeire Neris Santos, Solange Ribeiro da Silva, Nilton Jose da Silva.;Exame do Pezinho: Estratégias de Acesso nas Unidades Básicas de Saúde.;ATENÇÃO BÁSICA;1
+101;Victória Abreu Gatto, Fernanda Maria Simões da Costa Fujino, Livia Mitchiguian Hotta, Thais Perella Cunha Scigliano, Denise Castanho Antunes.;Experiência do estágio longitudinal em Homeopatia no CEMPICS;ATENÇÃO BÁSICA;1
+6;Caroline Borghi dos Santos, Paula Verônica Martini Maciel, Rafael Nunes da Silva;Fluxograma da Atenção Primária à Saúde para o Diagnóstico e Tratamento da Asma;ATENÇÃO BÁSICA;1
+98;Milton Peres Duran, Cintia Souza, Ana Carolina Perez Barradas, Gisele Cristine da Silva.;FORÇA TAREFA DE ENFRENTAMENTO A CÁRIE NO MUNICÍPIO DE GUARULHOS – SP.;ATENÇÃO BÁSICA;1
+19;Renart Lary Goda, Luana Marques Ferreira, Clara Andrade Prado Teixeira;Fortalecendo o Autocuidado e a Consciência em Saúde por Meio da Integração Multidisciplinar;ATENÇÃO BÁSICA;1
+139;Noemi Villalba Torres, Vanessa Rodrigues, Ademir Ferreira de Lima,.;GRUPO DE ANSIEDADE - UBS PARQUE JANDAIA;ATENÇÃO BÁSICA;1
+168;Aparecida Lucia Camilo Moreira da Silva, Lucivane Aparecida Oliveira, Sonia Maria Souza dos Santos Antunes.;"GRUPO DE ARTESANATO ""PINTANDO O SETE""";ATENÇÃO BÁSICA;1
+122;Maíra Eloá Pereira Simonetti, Valeria da Penha Dom Pedro Nascimento, Vinicius Lima Teixeira.;Grupo de Mulheres: Autoconhecimento e cuidado coletivo;ATENÇÃO BÁSICA;1
+58;AMANDA KARINA FERREIRA JOAQUIM;GRUPO DE RELAXAMENTO MEDITATIVO: UMA PRÁTICA INTEGRATIVA NAS UBS's DO PONTE ALTA E SANTA PAULA;ATENÇÃO BÁSICA;1
+140;Regiane Alves Avelino, Vanessa Rodrigues, Robson Moreira de Freitas,  Noemi Villalba Torres.;GRUPO DE SAÚDE MENTAL NA UBS PARQUE JANDAIA COM CAPS III ALVORECER;ATENÇÃO BÁSICA;1
+180;Denise Castanho Antunes, Priscila Evangelista da Silva.;GRUPO INTEGRATIVO: ESTILO DE VIDA SAUDÁVEL E AS PRÁTICAS INTEGRATIVAS E COMPLEMENTARES DA SAÚDE;ATENÇÃO BÁSICA;1
+171;Giselle Azevedo Rosental;GRUPO OFICINA;ATENÇÃO BÁSICA;1
+11;Raphaela Nochelli Braz, Carla Rafaela Donegá, Evelyn Sayeg;História da retomada da Reserva Multiétnica Filhos desta Terra e impactos na saúde mental;ATENÇÃO BÁSICA;1
+9;Maria Emília Vignola de Moura;IMPACTO DA INTERVENÇÃO FARMACÊUTICA NA ADESÃO AO TRATAMENTO DO PACIENTE NA UBS PARAVENTI;ATENÇÃO BÁSICA;1
+95;Milton Peres Duran, Cintia Souza, Ana Carolina Perez Barradas, Gisele Cristine da Silva.;IMPLANTAÇÃO DA CLASSIFICAÇÃO DE RISCO EM ESCOLARES NO MUNICÍPIO DE GUARULHOS-SP.;ATENÇÃO BÁSICA;1
+15;CRISTIANE DOMENE SALUSTIANO DE LIMA;IMPLANTAÇÃO DO CUIDADO FARMACÊUTICO NA UNIDADE BÁSICA DE SAÚDE - PONTE GRANDE;ATENÇÃO BÁSICA;1
+32;Naiane Mendes Teixeira Vicentini;IMPLANTAÇÃO DO CUIDADO FARMACÊUTICO NAS UNIDADES DE SAÚDE DA REGIÃO II - CANTEREIRA;ATENÇÃO BÁSICA;1
+2;Susana Yaskara Borches Herrera;IMPLANTAÇÃO E BENEFÍCIOS DO CUIDADO FARMACÊUTICO NAS UNIDADES DE SAÚDE DA REGIÃO 4 DE GUARULHOS;ATENÇÃO BÁSICA;1
+77;Cintia Aparecida Souza, Marina Nairismagi Alves.;JUNTOS NA PREVENÇÃO: ENFRENTANDO AS INFECÇÕES SEXUALMENTE TRANSMISSÍVEIS NO PROGRAMA SAÚDE NA ESCOLA;ATENÇÃO BÁSICA;1
+102;José Lucas Violim de Gouveia;MAPA PADRÃO DAS UNIDADES BÁSICAS DE SAÚDE: AUTO RECONHECIMENTO NO TERRITÓRIO DA SAÚDE;ATENÇÃO BÁSICA;1
+76;Liria Rodrigues dos Santos, Cintia Aparecida Souza, Margareth Denise Maia Mayoral , Vivian Pedrosa da Cruz, Vânia Lúcia de Correia, June Liz Dias de Souza.;Microplanejamento: Estratégias e Práticas para o aumento da cobertura vacinal em 2023;ATENÇÃO BÁSICA;1
+150;William Akira Lima Shimizu, Vanessa Varella Lourenço.;O brincar como estratégia de promoção à saúde no risco de TEA: PROCESSO DE TRABALHO e-multi na APS;ATENÇÃO BÁSICA;1
+87;Solange Aparecida Miguel, Regiane Vieira Souza.;O PROGRAMA MOVIMENTA SAÚDE COMO FERRAMENTA DE INTERVENÇÃO NA UNIDADE PRISIONAL JOSÉ PARADA NETO;ATENÇÃO BÁSICA;1
+26;Luca Mateus Pedroza Sales;O USO DE FERRAMENTAS DIGITAIS PARA IMPULSIONAR A ADESÃO À MUDANÇA DO ESTILO DE VIDA;ATENÇÃO BÁSICA;1
+119;CARLA RAFAELA DONEGÁ, Regiane Vieira Souza, Andrea Cristina Garcia, Gabriel N. Komeçu, Rafael Nunes da Silva, Raphaela Nochelli Braz.;O USO DE PRÁTICAS INTEGRATIVAS E COMPLEMENTARES EM SAÚDE NO CENTRO DE DETENÇÃO PROVISÓRIA;ATENÇÃO BÁSICA;1
+108;DUCERIA GONÇALVES MENEGUETTI PASTORELLO;PARQUE INDÍGENA DO XINGU – uma vivência intercultural;ATENÇÃO BÁSICA;1
+68;Camila Flávia Matuda Cabral, Camila Esteves Figueira.;Programa Saúde na Escola: importância e desafio de sua implantação;ATENÇÃO BÁSICA;1
+131;Giselle Azevedo Rosental;PROJETO PAPO CALCINHA;ATENÇÃO BÁSICA;1
+128;Admilson Lopes, Jessica Isabel Vellido.;PROMOÇÃO DA QUALIDADE DE VIDA ATRAVÉS DA AUTONOMIA E AUTOCUIDADO: RELATO DE EXPERIÊNCIAS;ATENÇÃO BÁSICA;1
+86;Cintia Aparecida Souza, Amanda Loos Agra Takada, Vivian Pedrosa da Cruz, Liria Rodrigues dos Santos, Margareth Denise Maia Mayoral, Vânia Lúcia de Correia, June Liz Dias de Souza.;Reorganização das equipes multiprofissionais na Atenção Primária à Saúde do Município de Guarulhos;ATENÇÃO BÁSICA;1
+109;BEATRIZ SOARES VICTORINO;RESIDÊNCIA MULTIPROFISSIONAL E EDUCAÇÃO ANTIRRACISTA: CONSTRUINDO PRÁTICAS DE EQUIDADE NA APS;ATENÇÃO BÁSICA;1
+100;Bianca Santiago Menezes, William Akira Lima Shimizu.;Resolubilidade da Fisioterapia na APS nos Problemas da Coluna Vertebral: Um Processo de Trabalho;ATENÇÃO BÁSICA;1
+56;Silvia de Cassia Araujo Alves;Superando limites: como a fisioterapia em grupo transforma vidas de pacientes com sequelas de AVC;ATENÇÃO BÁSICA;1
+151;Regiane Vieira Souza, Letícia de Borborema Neves,  Solange Aparecida Miguel.;Tecendo Histórias;ATENÇÃO BÁSICA;1
+152;ALMIRA DE PAIVA BAGGIO, DALVA DA SILVA NASCIMENTO, WILLIAN BEZERRA MELLO BARBOSA.;TRNSPORTE SANITÁRIO - HEMODIÁLISE;ATENÇÃO BÁSICA;1
+75;Cintia Aparecida Souza, Liria Rodrigues dos Santos.;Vacinação na Escola: Promovendo Saúde e Prevenção;ATENÇÃO BÁSICA;1
+43;Kristina Romano Pimentel, Ana Paula Alves dos Santos.;"""A ARTE DE CONSTRUIR NOVOS CAMINHOS"". A TRAJETÓRIA DE GRUPOS DE AMPUTADOS EM REABILITAÇÃO NO CER.";ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+167;Michelly Severino Da Hora, Isabel Aline Santana Alves, Aline Lopes de Assunção.;“Empoderadas”: Grupo de Encontros e (Re)conhecimentos de Mulheres em um CAPS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+88;Maria Joelma da Silva Araujo, Izabel Ferreira dos Santos, Corina Josefa da Silva.;“PÉ PRA FORA” NO CAPSIJ RECRIAR - GRUPO NO TERRITÓRIO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+182;Adriano Pereira;0 jornal como estrutura de sintomas;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+137;Gilberto de Almeida Gomes, Dayane Villca.;A busca da interprofissionalidade no cuidado da obesidade infantojuvenil na atenção especializada;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+146;Marilda Moretti Favaretto, Magna Araujo Chagas Pollaria.;A Importância do Trabalho Corporal em Saúde Mental no CAPS Adulto III Alvorecer;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+135;Thayná Vicente de Freitas, Scarlet Matias Pereira.;A influência do pré-natal na decisão materna da via de parto cesariana;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+60;Érika Gomes de Oliveira, Claudia Adriene Silvestre Machado de Melo, Eliane Alves Vieira, Giane Matias da Costa Souza.;A UPA acolhe o mundo - Ação conjunta com a Casa de Passagem para atendimento da população afegã;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+155;Giovanna Bittencourt, Clara de Oliveira Papa, Rafaela Venceslau Santos, Genivaldo Miguel de Melo.;Abandono de PrEP: uma investigação de Residentes em Saúde Mental no SAE Carlos Cruz;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+28;Illora Aswinkumar Darbar Shimozato, Carla Cristina Costa Monteiro de Lima, Paula Cristina Santoro, Fernando Pellegrini Ferraz, Anderson Felix Andrade.;ACIDENTE VASCULAR CEREBRAL: RETRATO DO PERFIL EPIDEMIOLÓGICO DOS PACIENTES NO CER II DE GUARULHOS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+104;Francisleyne Aparecida Miranda Severo, Rafaela Ferreira da Silva.;Acolhimento qualificado: Uma Experiencia em Colposcopia no Cemeg São João;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+114;Priscilla Pavanelli Cavalcanti, Ariane de Freitas Bunhola, Edilene Couto de Moraes, Berenice Sabino do Vale Trotta.;AMBULATÓRIO DE NEONATOLOGIA - ANEO, UMA ESTRATÉGIA DE ACOLHIMENTO AO RECÉM-NASCIDO DE RISCO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+123;Sandra Alves Andrade, Ana Paula Dos Santos Silva.;APLICAÇÃO DE PROTOCOLO INTERNACIONAL INCENTIVA EQUIPE DE SAÚDE NO CENTRO DE ESPECIALIDADE MÉDICAS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+148;Leticia Fernandes Carioca;Arte, cultura e território como potência de cuidado;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+143;Emilly Thaisy Maciel Silva, Karina Capucho Nakamura, Hayane Miranda Menezes, Lucas Tomé de Sousa, Jamile Fernandes Ferreira, Daniela de Paula Costa, Bruno Torquato de Araujo, Joyce Pessoa Nogueira, Lilian Tamara Takahashi Cardoso dos Santos.;ASSISTÊNCIA MULTIDISCIPLINAR NA PREVENÇÃO DO CÂNCER DE MAMA NO CEMEG SÃO JOÃO: DESAFIOS E ÊXITOS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+97;Milton Peres Duran,Ana Carolina Perez Barradas, Gisele Cristine da Silva.;ATENÇÃO ÀS OCLUSOPATIAS ATRAVÉS DA CLASSIFICAÇÃO DE RISCO NO MUNICÍPIO DE GUARULHOS SP.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+165;Marcos José Monteiro Lemos, Adalberto Pereira, Vanessa Domingues Imamoto, Beatriz Duarte, Lindiane Santos Souza, Cristiane Félix de Oliveira.;Atende Já Dengue: Plano de Contingência e Estratégias para Enfrentamento da Epidemia no HMPB;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+138;Marcia Burrattino Melhado, Patricia Moraes Borges.;AVALIAÇÃO NEUROPSICOLÓGICA COMO QUALIFICADORA DO CUIDADO INTEGRAL NO SUS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+132;lucia de fatima costa, ;AVALIAÇÃO NEUROPSICOLÓGICA NO CAPS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+149;Hellen Ribeiro Castilho;CÂNCER BUCAL: DESMISTIFICANDO O DIAGNÓSTICO, ABORDAGENS E ESTRATÉGIAS DE SUPORTE NO CEO SÃO JOÃO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+156;Elisângela dos Santos, Tatiana Marcatto, Maria Célia Ohara.;CAPS Bom Clima e USF São Rafael, Trabalhos Intersetoriais Trazem Bons Resultados No Cuidado;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+116;CARLA RAFAELA DONEGÁ, Regiane Vieira Souza, Andrea Cristina Garcia, Daniela de Paula Costa, Bruno Torquato de Araújo, Camila R. de Almeida, Gabriel N. Komeçu.;CUIDADO DA POPULAÇÃO INDÍGENA NA ATENÇÃO ESPECIALIZADA;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+14;Juliana Giampauli;CUIDADO FARMACÊUTICO NA SAÚDE MENTAL;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+154;Ingrid Campos Miguez Ferreira, Gabriella Facunte Oliveira, Mônica Rodrigues Ângelo da Silva.;CULINÁRIA COMO FERRAMENTA DE EMPODERAMENTO, AUTONOMIA E SAÚDE MENTAL DOS USUÁRIOS DO CAPS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+157;Elaine Sefrian Figueiredo, ROSANE DE DEUS CHAVES AVELLAR, SUSYANE VIEIRA DE OLIVEIRA, LUARA BARBOSA DOS SANTOS.;DESMAME DA GASTROSTOMIA EM CRIANÇA COM ECNE. RELATO DE CASO - INTERLIGAÇÃO COM PARCEIROS DA REDE.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+13;Cristiane Solimã Carreira Gobatto, Marcelo Cordeiro, Rita de Cássia Alves Bezerra;ESCOLHENDO A VIDA Relato da experiência com pacientes em sofrimento mental no PA Paraventi;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+170;Marcos José Monteiro Lemos,  Adalberto Pereira, Vanessa Domingues Imamoto, Beatriz Duarte, Lindiane Santos Souza, Beatriz Duarte.;ESTRATÉGIA DE GESTÃO PARA O ENFRENTAMENTO DE MICROORGANISMOS MULTIRRESISTENTES NA UTI DO HMPB;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+31;Kátia Cristina Freitas Gimenez;FATORES DE SUCESSO PARA A REABILITAÇÃO FONOAUDIOLÓGICA DE UMA PESSOA IDOSA COM AFASIA DE LONGO PRAZO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+174;Ana Carolina dos Santos, Mauricio de Almeida Gonçalves.;FORTALECENDO LAÇOS: EDUCAÇÃO PERMANENTE COMO FERRAMENTA DO CUIDADO.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+117;Cristiane Kato, Érika de Lima Cardoso.;FORTALECIMENTO, AUTONOMIA E AMPLIAÇÃO DE REPERTÓRIO ATRAVÉS DA CULINÁRIA CAPS IJ AMIGO JOVEM;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+142;Renata Volpon de Carvalho, Karina Scapolan Carvalho Favre.;GRUPO DE ATIVIDADES PROGRAMADAS: PROMOVENDO AUTONOMIA E INDEPENDÊNCIA.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+169;Adalberto Pereira, Liliane Medeiros de Araújo Almeida, Cristiane Ribeiro, José Wilson de Oliveira.;HOSPITAL AMIGO DO TRANSPLANTE: HMPB É PREMIADO PELA ECESP POR MAIOR NÚMERO DE DOAÇÕES EFETIVAS EM SP;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+158;Natália Sperandio Cavaco, Ana Clara Alves Dias.;Implantação de educação continuada na prevenção de quedas e promoção de equilíbrio no SUS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+20;Angelica Mendes de Oliveira, Cristina Lulay.;IMPLANTAÇÃO DE INDICADORES DA RECONCILIAÇÃO MEDICAMENTOSA NO PRONTO ATENDIMENTO PARAVENTI;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+10;ERICA DA SILVA MAGNO;IMPLANTAÇÃO DO CUIDADO FARMACÊUTICO NO CENTRO DE TESTAGEM E ACOLHIMENTO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+162;Luisa Preisler, Francisleyne Aparecida Miranda Severo, Daniela de Paula Costa.;Implementação da agenda de cirurgia dermatológica no CEMEG São João;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+49;Kátia Cristina Freitas Gimenez, Adriana Biasini Smarra dos Santos.;INTERVENÇÃO EM GRUPO PARA PESSOAS IDOSAS COM DOENÇA DE PARKINSON: UMA PROPOSTA POTENCIALIZADORA;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+40;Adalberto Pereira, Martino José Piatto, Clebis Valter Ferreira Rodrigues, Aurora Maria César Miranda.;LEAN NAS EMERGÊNCIAS NO HMPB: IMPLEMENTAÇÃO DE FERRAMENTAS PARA OTIMIZAÇÃO E MELHORIAS NOS PROCESSOS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+127;DUCYANNE CARLOS DE MORAIS CAMARGO, ROBERTA ALVES DA SILVA.;MODELO DE MUTIRÃO DE ATENDIMENTO COMO FERRAMENTA DE PROMOÇÃO À SAÚDE E RASTREAMENTO;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+129;Marcelo Cordeiro Barreto de Oliveira, Antônia Lucileide Rodrigues Ferreira, Camila Caetano de Souza, Cristiane Solimã Carreira Gobatto, Eliete Santana de Freitas, Maria Aparecida Nunes Sampaio Jones, Rita de Cássia Alves Bezerra.;Moradores de áreas livres: Um breve relato das ações, perspectivas e desafios no PA Paraventi;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+71;Talita de Carvalho Leite, Simone Petri de Souza Amorim, Paula Regina de Sousa Ribeiro, Roberto lira Lopes, Rosa Alves de Brito Bertao,Jaqueline Fabricio Giamassi.;Núcleo de Ensino e Pesquisa do Pronto Atendimento Alvorada - NEPPA;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+55;Illora Aswinkumar Darbar Shimozato, Carla Cristina Costa Monteiro de Lima, Paula Cristina Santoro, Fernando Pellegrini Ferraz, Anderson Felix Andrade.;O EMPREGO DE PARCERIAS NO DESENVOLVIMENTO SUSTENTÁVEL PARA UMA MELHOR ACESSIBILIDADE;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+29;Carla Cristina Costa Monteiro de Lima, Illora Aswinkumar Darbar Shimozato, Fernando Pellegrini Ferraz, Paula Cristina Santoro, Anderson Felix Andrade.;O IMPACTO DA TECNOLOGIA ASSISTIVA NA QUALIDADE DE VIDA DOS USUÁRIOS DE GUARULHOS;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+91;Marina Nairismagi Alves, Juliana Melo Mondeki;O matriciamento como fortalecimento da linha de cuidado do HIV/aids e Hepatites Virais em Guarulhos;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+163;Dione Aparecida de Carvalho;Práticas exitosas no enfrentamento da epidemia de dengue em Guarulhos;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+72;Talita de Carvalho Leite, Simone Petri de Souza Amorim, Paula Regina de Sousa Ribeiro, Roberto lira Lopes, Rosa Alves de Brito Bertao,Jaqueline Fabricio Giamassi.;Programa Acolher em Saúde - Encaminhamento Especializado no PA Alvorada.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+115;Marcela Tamashiro, Paulo Sérgio Lourenço Filho.;Protagonismo da família no Centro de Atenção Psicossocial Infanto- Juvenil Amigo Jovem;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+136;Tarsila Maria Ovelheiro, Alessandra Silva Urbano.;Psicoeducação e Comportamento Alimentar: alimentar a alma sem prejudicar o corpo.;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+160;Jaqueline Sousa Pessoa, Raphael Sebastian de Souza Pinto, Tabatha Crystina Faria Corradi, Kelly Crsitina Oliveira, Dione Aparecida de Carvalho Paixão.;Qualificação das unidades Pronto Atendimento- Upa Paulista e Upa Cumbica;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+50;Katia Karina Gonçalves Ferreira de Jesus, Luciane Aparecida Nogueira da Silva.;Roda de Conversa para Mulheres em um CAPS Adulto: Empoderamento feminino e o cuidado em saúde mental;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+59;Érika Gomes de Oliveira, Claudia Adriene Silvestre Machado de Melo, Eliane Alves Vieira, Giane Matias da Costa Souza.;Servidor Protegido - Protocolo Upa Paulista de Combate à Violência Contra o Servidor;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+172;Ana Carolina dos Santos;Silêncio expressivo: o paciente esquizofrênico crônico com comunicação verbal reduzida;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+12;Daniela Cristina Sobral da Silva ;TRATAMENTO DE QUEIMADURA DE SEGUNDO GRAU POR ESCALDO EM PACIENTE DIABÉTICO PELO EMAD II ;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+173;Marcos José Monteiro Lemos,  Adalberto Pereira, Vanessa Domingues Imamoto, Beatriz Duarte, Lindiane Santos Souza, Cristiane Félix de Oliveira.;UNIDADE DE TERAPIA DIALÍTICA: CUIDADO ESPECIALIZADO E EXCLUSIVO PARA PACIENTES CLÍNICOS NO HMPB;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+164;Fábio José Duarte dos Santos, Karina Moyano Amorim, Maria Claudia de Araújo Silva Fonseca,, Claudia Sampaio Apate Penteado.;VIDAS RESSIGNIFICADAS: PROMOVENDO A INCLUSÃO SOCIAL E REABILITAÇÃO ATRAVÉS DA PRÁTICA DE EQUOTERAPIA;ATENÇÃO ESPECIALIZADA, URGÊNCIA E EMERGÊNCIA;2
+79;Roberto Carlos Castro Marcondes de Campos, Thais Machado Caetano de Figueiredo, Rennata Priscylla Ferreira, Naiane M. T. Vicentini, Denise S. Santos, Marília C. Rodrigues, Amanda Lopes, Ana Luiza N. Caraccia, Renée C. V. de Freitas, Susana Y. B. Herrera, Sabrina R. G. da Silva, Lidiane M. Zanca,  Adriana A. P. da Silva, Toshimasa Munakata, Claudia Shimasaki, Dione Ap. de C. Paixão, Tabatha K. F. Corradi, Edgar de P. Lima, Marcelo Marchi.;GESTÃO SUSTENTÁVEL DE RESÍDUOS DE SAÚDE EM GUARULHOS: AÇÕES CONTRA AS MUDANÇAS CLIMÁTICAS;DESENVOLVIMENTO SUSTENTÁVEL / MUDANÇAS CLIMÁTICAS;3
+110;Silvia Rosana dos Santos;HORTAS DAS CORUJAS MÁRIO SHINOHARA NA UBS CARMELA: CONTRIBUINDO COM O ALCANCE DA AGENDA 2030;DESENVOLVIMENTO SUSTENTÁVEL / MUDANÇAS CLIMÁTICAS;3
+82;Cristiane Carlin Passos, Juliana Martins da Silva, Astreia Cibele Geny Francisca de Paula da Cruz, Luciana Ferreira Fontes, Valeska Aubin Zanetti Mion.;Monitoramento de Temperatura nos Açougues: Impacto Climático e Medidas de Segurança Alimentar;DESENVOLVIMENTO SUSTENTÁVEL / MUDANÇAS CLIMÁTICAS;3
+153;Evelyn Sayeg, Íris S. R. Rotger, Icaro P. Oliveira.;Projeto Tear Guarulhos - Objetivos de Desenvolvimento Sustentável (ODS) no SUS;DESENVOLVIMENTO SUSTENTÁVEL / MUDANÇAS CLIMÁTICAS;3
+35;Paula Buttaro Farias Lira, Silvia Ferlini Dias, Katia Varela Gomes, Vera Lúcia dos Santos, Virgínia Adelaide Dos Santos Frassei, Lidiane Maria Zanca, Helena Saroni.;1º Congresso de Residência Médica e Multiprofissional de Guarulhos: inovando para um futuro saudável;EDUCAÇÃO EM SAÚDE;4
+159;Lidiane Maria Zanca, Amanda Eufrásio, Adriana Antunes Pinheiro da Silva, Gustavo José Salatino, Priscila Marcelino Correa, Rafael Nunes da Silva.;A Educação Permanente como ferramenta de acolhimento aos novos trabalhadores da rede SUS Guarulhos;EDUCAÇÃO EM SAÚDE;4
+66;Kimberly Alves Hassem;AÇÃO DE EDUCAÇÃO ALIMENTAR E NUTRICIONAL EM GRUPO DE DANÇA DE CUMBICA;EDUCAÇÃO EM SAÚDE;4
+81;Ariane de Freitas Bunhola, Edilene Couto de Moraes, Talita da Rocha Ramos Farias;EDUCAÇÃO PERMANENTE EM SAÚDE NA PREVENÇÃO DE DANOS EVITÁVEIS EM PRÁTICAS AUTOMÁTICAS NA ENFERMAGEM;EDUCAÇÃO EM SAÚDE;4
+141;Carla Rafaela Donegá, Andrea Cristina Garcia, Regiane Vieira Souza, Gabriel N. Komeçu, Raphaela Nochelli Braz.;ESTÁGIO NA RESIDÊNCIA MULTIPROFISSIONAL COM A EQUIPE DE SAÚDE INDÍGENA DE GUARULHOS;EDUCAÇÃO EM SAÚDE;4
+48;Giselle Bartelotti Nunes, Jennifer Bezerra Barreto de Melo.;FARMACÊUTICOS MAIS PERTO DE VOCÊ – Informativo Técnico Comitê do Uso Racional de Medicamentos;EDUCAÇÃO EM SAÚDE;4
+178;Priscila Evangelista da Silva, Denise Castanho Antunes.;GRUPO DE ARTESANATO PARA ALÉM DAS PRÁTICAS MANUAIS: relato de experiência do CEMPICS Fracalanza;EDUCAÇÃO EM SAÚDE;4
+113;Pedro Miroel Antunes Pereira, DAIANE AMARAL DE MOURA.;IMPLANTAÇÃO DO CUIDADO FARMACÊUTICO AOS PACIENTES COM DIABETES MELLITUS NA UBS JARDIM NOVA CUMBICA;EDUCAÇÃO EM SAÚDE;4
+125;Grace Peixoto Noronha, Edson de Paula Lima Junior, Valeska Aubin Zanetti Mion.;Informar para transformar – uma estratégia de sensibilização no combate às arboviroses!;EDUCAÇÃO EM SAÚDE;4
+176;Gilmara Correia Azenha, Jonnas Kallinton Saraiva Ribeiro, Sonia Regina Moreira da Silva, Aila Maria Barros Costa Duarte, Estela Vitor Burdin Kasse, Simone Irami Predeus.;No Lugar dela - Rota Crítica da Violência;EDUCAÇÃO EM SAÚDE;4
+65;Leila Regina de Aquino Bezerra, Ana Luis dos Santos, Dayany Pereira da Silva.;O CUIDADO FARMACÊUTICO NO ACOMPANHAMENTO DE PACIENTES COM OBESIDADE;EDUCAÇÃO EM SAÚDE;4
+3;Caroline Borghi dos Santos, Paula Verônica Martini Maciel;O entendimento que a Equipe da UBS Cidade Martins tem sobre o MFC e sua atuação;EDUCAÇÃO EM SAÚDE;4
+184;Lidiane Maria Zanca, Adriana Antunes Pinheiro da Silva, Guilherme Novais de Jesus, Davi Pereira Silva;O Impacto da Era Digital nos Processos de Educação Permanente no Município de Guarulhos;EDUCAÇÃO EM SAÚDE;4
+84;FÁBIO JOSÉ DUARTE DOS SANTOS, Erika Rafael Pereira.;OFICINAS QUE TRANSFORMAM : AMPLIANDO O CONHECIMENTO ATRAVÉS DA TROCA DE SABERES;EDUCAÇÃO EM SAÚDE;4
+133;Marcia Burrattino Melhado, Patricia Moraes Borges.;Psicologia e Intersetorialidade: desafios e perspectivas da categoria- II Simpósio de Psicologia PMG;EDUCAÇÃO EM SAÚDE;4
+130;Monica Pompiani, Neide Jane Tavavres da Silva,  Mayara Siqueira Gomes.;Qual é a sua Loucura? – Saúde Mental como eixo de discussão entre serviços de saúde no território;EDUCAÇÃO EM SAÚDE;4
+183;Merilin Vieira de Oliveira Alencar, Marli Miranda Vieira, Anderson Adão Rodrigues, Lucas de Oliveira Cardozo,  Regiane Vieira Souza.;QUIMIOPROFILAXIA DA ILTB NA UNIDADE PRISIONAL X CAPACITAÇÃO DOS PROFISSIONAIS DE ENFERMAGEM EM PPD.;EDUCAÇÃO EM SAÚDE;4
+85;Fábio José Duarte dos Santos, Catarina de Deus Rodrigues.;TODOS SOMOS UM: DINÂMICA EM GRUPO COMO FERRAMENTA DE GESTÃO E SEU IMPACTO NO CLIMA ORGANIZACIONAL;EDUCAÇÃO EM SAÚDE;4
+118;CARLA RAFAELA DONEGÁ, Regiane Vieira Souza, Andrea Cristina Garcia, Gabriel N. Komeçu.;VESTIBULAR INDÍGENA: INCLUSÃO DA POPULAÇÃO INDÍGENA NA EDUCAÇÃO;EDUCAÇÃO EM SAÚDE;4
+89;Janaina Giampauli, Silvia Leticia Vieira de Souza, Fabiana Bueno Pena.;A Sua Função faz a diferença: Um Projeto de Reconhecimento e Valorização Profissional;GESTÃO EM SAÚDE;5
+36;Marcelo Pedralina de Souza, Maria Inês Salivar, Luiz Antonio Auada, Matheus Lopes Costa.;AGREGANDO PESSOAS: MAIS MÉDICOS GUARULHOS;GESTÃO EM SAÚDE;5
+52;Maria Cecília Pereira de Assis, Henrique Gomes de Freitas, Leopoldo Gobara e Faria, Raquel Ribeiro Coste, Fábio Cavalcanti de Souza.;Atendimento de paciente crônico, protocolo de funcionamento de orientação em saúde;GESTÃO EM SAÚDE;5
+30;Danielle Lima de Oliveira Ribeiro, Maria Inês Salivar.;Bem-vindo à Secretaria da Saúde de Guarulhos;GESTÃO EM SAÚDE;5
+53;Fernanda Ramos Ferreira dos Santos, Adilson Borba, Janaína GiampaulI, Silvia Letícia Vieira de Souza;CLIMA ORGANIZACIONAL: FERRAMENTA DE PARTICIPAÇÃO DE TRABALHADORES NA AVALIAÇÃO DE SERVIÇOS DE SAÚDE;GESTÃO EM SAÚDE;5
+44;Giselle Bartelotti Nunes;CONSULTA FARMACÊUTICA NAS UNIDADES DE SAÚDE DO MUNICÍPIO DE GUARULHOS;GESTÃO EM SAÚDE;5
+103;José Lucas Violim de Gouveia, Merilin Vieira de Oliveira Alencar, Iraceli Meireles Duque.;DASHBOARD DE ACOLHIMENTOS: TECNOLOGIA APLICADA PARA TOMADA DE DECISÃO EM TEMPOS DE CRISE;GESTÃO EM SAÚDE;5
+34;Priscila de Souza Chagas, Danielle Lima de Oliveira Ribeiro, Renato Corte Lopes.;ECONOMIA DE RECURSOS NA SAÚDE: PRÁTICAS DA GESTÃO NA ALTERAÇÃO DA CARGA HORÁRIA DE PROFISSIONAIS;GESTÃO EM SAÚDE;5
+27;Luca Mateus Pedroza Sales;EDUCAÇÃO PERMANENTE NA ESTRATÉGIA DE PRECEPTORIA MÉDICA: GERENCIANDO TEORIA À PRÁTICA;GESTÃO EM SAÚDE;5
+22;Daniele Aparecida Sampaio da Siva, Viviane Haddad Silva Higuchi, Sandra de Oliveira Sacoman, Alexandra Firmino Paz;EMPATIA NO AR: EXPERIÊNCIA DA CIDADE DE GUARULHOS NO USO DE MUSICOTERAPIA EM REUNIÕES DE ALTA GESTÃO;GESTÃO EM SAÚDE;5
+16;Maria Cláudia de Araújo Silva Fonseca, Claudia Sampaio Apate Penteado, Karina Moyano Amorim , Fábio José Duarte;"Gente Que Faz o SUS Acontecer "" O Resgate do Protagonismo do Trabalhador na Construção do SUS.";GESTÃO EM SAÚDE;5
+126;Edson de Paula Lima Junior, Valeska Aubin Zanetti Mion.;Gestão com cuidado melhorando resultados;GESTÃO EM SAÚDE;5
+47;Rosileine Pinheiro Lemes, Gleiciel de Jesus Tiburcio Marques, Leila Maria Rodrigues Maciel.;GESTÃO TECNOLÓGICA: FERRAMENTA DIGITAL DE APOIO PARA GESTORES DA ATENÇÃO PRIMÁRIA À SAÚDE;GESTÃO EM SAÚDE;5
+175;Andrea Cristina Garcia, Amanda Eufrásio, Maria Veronica P. Biagi, Regiane Vieira Souza, Neidna Cilene Melo Palazon, Letícia de Borborema Neves, Megumi Saseda Toguchi, Luciana Vieira Souza, Zenaide Costa dos Santos Freitas, Greice Cristina de Oliveira.;GRUPO DE TRABALHO INTERSETORIAL E PERMANENTE DE SAÚDE DA POPULAÇÃO NEGRA;GESTÃO EM SAÚDE;5
+7;Thais Machado Caetano de Figueiredo, Giselle  Bartelotti Nunes, Amanda de Moura Lopes, Susana Yaskara Borches Herrera, Naiane Mendes Teixeira Vicentini;Implantação de Indicadores do Cuidado Farmacêutico no Sistema Único do Município de Guarulhos;GESTÃO EM SAÚDE;5
+8;Thais Machado Caetano de Figueiredo, Giselle  B. Nunes, Amanda M. Lopes, Susana Y. B. Herrera, Naiane M. T. Vicentini;IMPLANTAÇÃO DO CUIDADO FARMACÊUTICO NAS UNIDADES DE SAÚDE DA REGIÃO DE SAÚDE CENTRO DE GUARULHOS;GESTÃO EM SAÚDE;5
+38;camilaestevesfig@gmail.com, Carla Rafaela Donegá.;Inserção da Saúde Indígena na Residência de Medicina de Família e Comunidade;GESTÃO EM SAÚDE;5
+181;Simone dos Santos de Lima;MORTALIDADE MATERNA: ÓBITOS POR CAUSAS DIRETAS E RECOMENDAÇÕES DE GUIAS DE PRÁTICA CLÍNICA;GESTÃO EM SAÚDE;5
+24;VIVIANE HADDAD SILVA HIGUCHI, Alexandra Firmono Paz, Sandra de Oliveira Sacoman, Daniele Aparecida Sampaio da Silva.;Nós vamos até você: RH in Loco, DRHS de Guarulhos vai até as unidades para facilitar a comunicação;GESTÃO EM SAÚDE;5
+41;Rafaela Venceslau Santos;O Matriciamento no cuidado integral das pessoas vivendo com HIV/Aids do Sae Carlos Cruz;GESTÃO EM SAÚDE;5
+54;Maria Cecilia Pereira de Assis, Daniela de Paula Costa, Bruno Torquato de Araújo, Fabio Cavalcanti de Souza, Raquel Ribeiro Coste, Leopoldo Gobara e Faria, Henrique Gomes de Freitas .;Otimização do atendimento e tratamento Pós trauma dos usuários do CEMEG São João;GESTÃO EM SAÚDE;5
+96;Milton Peres Duran, Cintia Souza, Ana Carolina Perez Barradas, Gisele Cristine da Silva.;PLANEJAMENTO DE ACESSO COM CLASSIFICAÇÃO DE RISCO EM SAÚDE BUCAL NA APS - GUARULHOS-SP.;GESTÃO EM SAÚDE;5
+107;DAMARIS APARECIDA PETRONI, Gisele Gonçalves Pereira, Graziela Freddi Matos Renoldi, Joseana Maria de Jesus, Karina Moyano Amorim, Maria Eugenia Vaca Franco, Paulo Alexandre de Moraes, Renan Marani Garcia, Renata Helisa Roseira Saturnino, Wagner de Castro Lopes.;PROCESSO REGULATÓRIO: PRIORIZAÇÃO DOS PRIMEIROS MIL DIAS DE UMA VIDA;GESTÃO EM SAÚDE;5
+1;MAURICIO DE ALMEIDA GONÇALVES;SRT Bom Clima: O caminho da Reabilitação Psicossocial através das Atividades de Vida Diária (AVDs);GESTÃO EM SAÚDE;5
+90;Fabiana Bueno Pena, Janaina Giampauli, Silvia Leticia Vieira de Souza.;Telessaúde e Psicologia Online: Transformando o Suporte Mental dos Servidores da Secretaria de Saúde;GESTÃO EM SAÚDE;5
+106;Patricia Maris de Souza Martino, Celina Fukuda Pereira, Denilson Takehiko Toguchi, ;Trabalho Intra/Intersetorial como facilitador na qualificação de projetos com recursos vinculados;GESTÃO EM SAÚDE;5
+74;Viviane Haddad Silva Higuchi, Carlos Henrique Pires Neto.;UMA PARCERIA BEM-SUCEDIDA ENTRE O SESMT E O DRH DA SAÚDE (2022-2023);GESTÃO EM SAÚDE;5
+93;Marina Nairismagi Alves, Ana Clara Henriques Loureiro F da Silva, Hellen Ribeiro Castilho, Leandro Botelho Hanna, Maria Mont Serrat Braga Sabat da Silva Pinto, Nívea Tosta Araújo.;A saúde bucal na linha de cuidado das Infecções Sexualmente Transmissíveis em Guarulhos;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+99;Ana Kely Braga de Oliveira, Adilson Borba,  Maria Apareida dos Santos Neris, Walquiria de Cerqueira Costa Kasaz.;Acolhimento como forma de amor;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+67;Viviane Haddad Silva Higuchi, Nayara Pantaleão Zanchetta, Renato Regis Veras Pedroza.;Atuação do psicólogo em avaliações periciais: um novo olhar para a Saúde do Servidor;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+161;Patrícia Rosa da Silva;DESCENTRALIZAÇÃO, RESPONSABILIDADE E COMPROMETIMENTO COM A INFORMAÇÃO NA SAÚDE DE GUARULHOS.;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+33;Fernanda Nunes da Matta Carmo, Magda Carvalho de Oliveira.;Detecção e resposta em viajantes inadmitidos diante da crise humanitária no aeroporto de Guarulhos;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+46;Renan Assis Guedes, Sonia Aparecida Bemfica Nascimento, Luciana Ferreira .;Educação em Vigilância Sanitária: Biossegurança em Odontologia no Município de Guarulhos;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+105;Patrícia Rosa da Silva, Valeska Aubin Zanetti Mion.;GRU CONTRA A DENGUE, VIGILÂNCIA EM SAÚDE ARTICULANDO AÇÕES NA MAIOR EPIDEMIA DE DENGUE EM GUARULHOS;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+17;Anderson Luís da Costa, Luciano Marques.;Laboratório de Saúde Pública Guarulhos como referência do Alto Tietê na realização dos testes IGRA;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+111;Adilson Borba , Silvia Leticia Vieira de Souza.;Massoterapia e Qualidade de Vida: Uma Abordagem pa-ra o Bem-Estar dos Servidores;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+23;Fernanda Nunes da Matta Carmo, Valeska Aubin Zanetti Mion;O defronte de Guarulhos contra a maior epidemia de dengue da história;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+179;Keila Costa de Oliveira, Denise Castanho Antunes, Fernanda Ramos Ferreira, Janaína Giampauli.;O TRABALHO EM REDE NO CONTEXTO DA SAÚDE DO TRABALHADOR E DAS PRÁTICAS INTEGRATIVAS E COMPLEMENTARES;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+147;THIAGO LORETO DE OLIVEIRA, MARCIO FERARACIO.;OS ACIDENTES DE TRABALHO NA REGIÃO DO ALTO TIETÊ - MUNICÍPIO DE GUARULHOS EM 2023;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+51;LÍGIA ORTOLANI DOS SANTOS, Fernanda Matta Carmo, Merilin V.O. Alencar, Letícia T. Rocio, Diane Fernanda B.C. Cardoso ;Papel dos Agentes Comunitários de Saúde frente às Doenças Crônicas Não Transmissíveis;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+92;Marina Nairismagi Alves, Fernanda Nunes da Matta Carmo .;PrEP no Território: Ampliando a Prevenção ao HIV na Atenção Primária a Saúde em Guarulhos/ SP;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+39;Patricia Batanero Cardoso dos Santos, Vanderlei Carneiro Silva, Fernanda Medeiros, Astréia Cibele Geni .Francisca de Paula da Cruz;Programa de Análise de Resíduos de Agrotóxicos em Alimentos : resultados do município de Guarulhos;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+45;Fernanda Ramos Ferreira dos Santos;PSICOTERAPIA BREVE COM ÊNFASE EM TERAPIA COGNITIVA-COMPORTAMENTAL: UMA FORMA DE PRODUZIR CUIDADO;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+25;Patrícia Rosa da Silva;SEM ZUMBIDO EM GUARULHOS O AEDES NÃO TEM VEZ, ESTRATEGIAS PARA AUMENTO DA VACINAÇÃO CONTRA A DENGUE;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+145;THIAGO LORETO DE OLIVEIRA, MARCIO FERARACIO.;Superando as Subnotificações de Acidentes de Trabalho no Município de Guarulhos;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+83;Cristiane Carlin Passos, Astreia Cibele Geny Francisca de Paula da Cruz, Fernanda Medeiros, Luciana Ferreira Fontes, Valeska Aubin Zanetti Mion.;Vigilância Sanitária em Eventos Culturais: Inovações e Impactos na Segurança Alimentar;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+112;Clebson Olievira Santos, Janaina Giampauli.;VOZES DA SAÚDE: A IMPORTÂNCIA DO CORAL PARA O BEM-ESTAR E INTEGRAÇÃO DOS SERVIDORES PÚBLICOS;VIGILÂNCIA EM SAÚDE E SAÚDE DO TRABALHADOR(A);6
+
+
+
+
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
